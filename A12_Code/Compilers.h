@@ -39,7 +39,7 @@
 ************************************************************
 * File name: Compilers.h
 * Compiler: MS Visual Studio 2022
-* Course: CST 8152 – Compilers, Lab Section: [011, 012]
+* Course: CST 8152 ï¿½ Compilers, Lab Section: [011, 012]
 * Assignment: A12, A22, A32.
 * Date: May 01 2023
 * Professor: Paulo Sousa
@@ -62,14 +62,12 @@
  * ............................................................................
  */
 
-/* TO_DO: Adjust your language (cannot be "Sofia") */
-
 /* Language name */
-#define STR_LANGNAME	"Sofia"
+#define STR_LANGNAME	"Viper"
 
 /* Logical constants - adapt for your language */
-#define SOFIA_TRUE  1
-#define SOFIA_FALSE 0
+#define VIPER_TRUE  1
+#define VIPER_FALSE 0
 
 /*
 ------------------------------------------------------------
@@ -80,18 +78,13 @@ NOTE: Some types may not be directly used by your language,
 */
 
 
-/* TO_DO: Define your typedefs */
-typedef char			sofia_char;
-typedef char* sofia_string;
-typedef int				sofia_intg;
-typedef float			sofia_real;
-typedef void			sofia_void;
 
-typedef unsigned char	sofia_boln;
-typedef unsigned char	sofia_byte;
-
-typedef long			sofia_long;
-typedef double			sofia_doub;
+typedef char			viper_char;
+typedef char* 			viper_str;
+typedef int				viper_int;
+typedef float			viper_float;
+typedef int				viper_bool;
+typedef void 			viper_void;
 
 /*
 ------------------------------------------------------------
@@ -113,11 +106,11 @@ Main functions signatures
 (Code will be updated during next assignments)
 ------------------------------------------------------------
 */
-sofia_intg mainReader(sofia_intg argc, sofia_string* argv);
+viper_int mainReader(viper_int argc, viper_str* argv);
 
 /* 
 TO_DO: Include later mainScaner (A22) and mainParser (A32)
 */
-sofia_void printLogo();
+viper_void printLogo();
 
 #endif

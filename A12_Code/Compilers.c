@@ -39,7 +39,7 @@
 ************************************************************
 * File name: compilers.c
 * Compiler: MS Visual Studio 2022
-* Course: CST 8152 – Compilers, Lab Section: [011, 012]
+* Course: CST 8152 ï¿½ Compilers, Lab Section: [011, 012]
 * Assignment: A12, A22, A32.
 * Date: May 01 2023
 * Professor: Paulo Sousa
@@ -79,8 +79,8 @@
 *************************************************************
 */
 
-sofia_intg main(int argc, char** argv) {
-	sofia_intg i;
+viper_int main(int argc, char** argv) {
+	viper_int i;
 	printLogo();
 	if (DEBUG) {
 		for (i = 0; i < argc; ++i)
@@ -93,7 +93,7 @@ sofia_intg main(int argc, char** argv) {
 			PGM_PARSER, "] - Parser\n");
 		return EXIT_FAILURE;
 	}
-	sofia_char option = argv[1][0];
+	viper_char option = argv[1][0];
 	switch (option) {
 	case PGM_READER:
 		printf("%s%c%s", "\n[Option '", PGM_READER, "': Starting READER .....]\n\n");
@@ -125,7 +125,7 @@ sofia_intg main(int argc, char** argv) {
 
 /* TO_DO: Update your logo with your own language message */
 
-sofia_void printLogo() {
+viper_void printLogo() {
 	printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 		"\t=---------------------------------------=\n",
 		"\t|  COMPILERS - ALGONQUIN COLLEGE (F23)  |\n",
