@@ -85,24 +85,39 @@
 *************************************************************
 */
 
-BufferPointer readerCreate(viper_int size, viper_int increment, viper_int mode) {
+BufferPointer readerCreate(viper_int size, viper_int increment, viper_char mode) {
 	BufferPointer readerPointer;
 	/* TO_DO: Defensive programming */
 	/* TO_DO: Adjust the values according to parameters */
+	if(size <= 0){ // Error checking params
+		size = READER_DEFAULT_SIZE;
+	} else if(size == NULL){
+		size == READER_DEFAULT_SIZE;
+	}
+	if(increment == 0 || increment == NULL){ // checking increment for no param
+		increment = 8;
+	}
+	if(mode != "f" || mode != "a" || mode != "m"){
+		return NULL;
+	}
+	
 	readerPointer = (BufferPointer)calloc(1, sizeof(Buffer));
 	if (!readerPointer)
 		return NULL;
 	readerPointer->content = (viper_str)malloc(size);
-	/* TO_DO: Defensive programming */
-	/* TO_DO: Initialize the histogram */
+
+	for(int i = 0; i < NCHAR; i++){
+		readerPointer->histogram[i] = 0; // intialize the histogram to each slot
+	}
 	readerPointer->size = size;
 	readerPointer->increment = increment;
 	readerPointer->mode = mode;
-	/* TO_DO: Initialize flags */
-	/* TO_DO: The created flag must be signalized as EMP */
+
+	readerPointer->flags = READER_DEFAULT_FLAG;	// Initalize the flag to EMP
+	readerPointer->flags = readerPointer->flags | READER_EMP_FLAG;
 	/* NEW: Cleaning the content */
 	if (readerPointer->content)
-		readerPointer->content[0] = READER_TERMINATOR;
+		readerPointer->content[0] = READER_TERMINATOR;	
 	readerPointer->position.wrte = 0;
 	readerPointer->position.mark = 0;
 	readerPointer->position.read = 0;
@@ -129,13 +144,24 @@ BufferPointer readerCreate(viper_int size, viper_int increment, viper_int mode) 
 BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 	viper_str tempReader = NULL;
 	viper_int newSize = 0;
-	/* TO_DO: Defensive programming */
-	/* TO_DO: Reset Realocation */
-	/* TO_DO: Test the inclusion of chars */
+
+	if(!readerPointer){
+		return NULL;
+	}
+
+	if(ch > NCHAR){
+		readerPointer->numReaderErrors++;
+		return NULL;
+	}
+
+	readerPointer->flags = readerPointer->flags & !(READER_REL_FLAG);
+
 	if (readerPointer->position.wrte * (viper_int)sizeof(viper_char) < readerPointer->size) {
-		/* TO_DO: This buffer is NOT full */
+		if(readerPointer->position.wrte * (viper_int)sizeof(viper_char) == readerPointer->size){ // test if I need to set the FUL bit
+			readerPointer->flags = readerPointer->flags | READER_FUL_FLAG;
+		}
 	} else {
-		/* TO_DO: Reset Full flag */
+		readerPointer->flags = readerPointer->flags & !(READER_FUL_FLAG); // apply & to !FULL flag to reset it
 		switch (readerPointer->mode) {
 		case MODE_FIXED:
 			return NULL;
@@ -154,9 +180,12 @@ BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 		/* TO_DO: Defensive programming */
 		/* TO_DO: Check Relocation */
 	}
-	/* TO_DO: Add the char */
+
 	readerPointer->content[readerPointer->position.wrte++] = ch;
 	/* TO_DO: Updates histogram */
+	readerPointer->histogram[ch]++; // Increment Histogram at location ch
+
+	
 	return readerPointer;
 }
 
@@ -273,7 +302,7 @@ viper_bool readerSetMark(BufferPointer const readerPointer, viper_int mark) {
 *   readerPointer = pointer to Buffer Reader
 * Return value:
 *	Number of chars printed.
-* TO_DO:
+* TO_DO:	
 *   - Use defensive programming
 *	- Check boundary conditions
 *	- Adjust for your LANGUAGE.

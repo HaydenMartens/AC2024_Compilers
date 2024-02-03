@@ -91,13 +91,17 @@ enum READER_MODE {
 #define READER_DEFAULT_SIZE			250		/* default initial buffer reader capacity */
 #define READER_DEFAULT_INCREMENT	10		/* default increment factor */
 
-/* Add your bit-masks constant definitions here - Defined for BOA */
+/* Add your bit-masks constant definitions here - Defined for Viper */
 /* BITS                                (7654.3210) */
 #define READER_DEFAULT_FLAG 0x00 	/* (0000.0000)_2 = (000)_10 */
 /* TO_DO: BIT 3: END = End of buffer flag */
+#define READER_END_FLAG 0x08 // (0000.1000)
 /* TO_DO: BIT 2: REL = Rellocation memory flag */
+#define READER_REL_FLAG 0x04 // (0000.0100)
 /* TO_DO: BIT 1: EMP = Buffer empty flag */
+#define READER_EMP_FLAG 0x02 // (0000.0010)
 /* TO_DO: BIT 0: FUL = Buffer full flag */
+#define READER_FUL_FLAG 0x01 // (0000.00001)_2 = (0.1)_16
 
 #define NCHAR				128			/* Chars from 0 to 127 */
 
@@ -120,7 +124,7 @@ typedef struct bufferReader {
 	viper_int		size;				/* current dynamic memory size (in bytes) allocated to character buffer */
 	viper_int		increment;			/* character array increment factor */
 	viper_int		mode;				/* operational mode indicator */
-	viper_int		flags;				/* contains character array reallocation flag and end-of-buffer flag */
+	viper_byte		flags;				/* contains character array reallocation flag and end-of-buffer flag */
 	Position		position;				/* Offset / position field */
 	viper_int		histogram[NCHAR];	/* Statistics of chars */
 	viper_int		numReaderErrors;	/* Number of errors from Reader */
@@ -128,7 +132,7 @@ typedef struct bufferReader {
 
 /* FUNCTIONS DECLARATION:  .................................. */
 /* General Operations */
-BufferPointer	readerCreate		(viper_int, viper_int, viper_int);
+BufferPointer	readerCreate		(viper_int, viper_int, viper_char);
 BufferPointer	readerAddChar		(BufferPointer const, viper_char);
 viper_bool		readerClear		    (BufferPointer const);
 viper_bool		readerFree		    (BufferPointer const);
