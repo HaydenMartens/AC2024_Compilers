@@ -434,6 +434,10 @@ viper_char readerGetChar(BufferPointer const readerPointer) {
 */
 viper_str readerGetContent(BufferPointer const readerPointer, viper_int pos) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetContent");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return content (string) */
 	return readerPointer->content + pos;;
 }
@@ -456,6 +460,10 @@ viper_str readerGetContent(BufferPointer const readerPointer, viper_int pos) {
 */
 viper_int readerGetPosRead(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetPosRead");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return read */
 	return readerPointer->position.read;
 }
@@ -477,8 +485,12 @@ viper_int readerGetPosRead(BufferPointer const readerPointer) {
 */
 viper_int readerGetPosWrte(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetPosWrte");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return wrte */
-	return 0;
+	return readerPointer->position.wrte;
 }
 
 
@@ -498,8 +510,12 @@ viper_int readerGetPosWrte(BufferPointer const readerPointer) {
 */
 viper_int readerGetPosMark(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetPosMark");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return mark */
-	return 0;
+	return readerPointer->position.mark;
 }
 
 
@@ -519,8 +535,12 @@ viper_int readerGetPosMark(BufferPointer const readerPointer) {
 */
 viper_int readerGetSize(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetSize");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return size */
-	return 0;
+	return readerPointer->size;
 }
 
 /*
@@ -539,8 +559,12 @@ viper_int readerGetSize(BufferPointer const readerPointer) {
 */
 viper_int readerGetInc(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetInc");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return increment */
-	return 0;
+	return readerPointer->increment;
 }
 
 /*
@@ -559,8 +583,12 @@ viper_int readerGetInc(BufferPointer const readerPointer) {
 */
 viper_int readerGetMode(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetMode");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return mode */
-	return 0;
+	return readerPointer->mode;
 }
 
 
@@ -580,8 +608,12 @@ viper_int readerGetMode(BufferPointer const readerPointer) {
 */
 viper_int readerGetFlags(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerGetFlags");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Return flags */
-	return 0;
+	return readerPointer->flags;
 }
 
 
@@ -600,7 +632,28 @@ viper_int readerGetFlags(BufferPointer const readerPointer) {
 */
 viper_void readerPrintStat(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerPrintStat");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Print the histogram */
+
+	// Initialize array of max size to store char count
+	viper_int charCount[256] = { 0 };
+	printf("Histogram:\n");
+
+	// Traverses the buffer and counts for chars
+	for (viper_int i = 0; i < readerPointer->position.wrte; ++i) {
+		viper_char currentChar = readerPointer->content[i];
+		charCount[currentChar]++;
+	}
+
+	// Prints histogram from the array
+	for (viper_int i = 0; i < 256; ++i) {
+		if (charCount[i] > 0) {
+			printf("%c: %d\n", (viper_char)i, charCount[i]);
+		}
+	}
 }
 
 /*
@@ -617,7 +670,13 @@ viper_void readerPrintStat(BufferPointer const readerPointer) {
 *************************************************************
 */
 viper_int readerNumErrors(BufferPointer const readerPointer) {
+	viper_int errors = 0;
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL) {
+		printf("Error in readerNumErrors");
+		return READER_TERMINATOR;
+	}
 	/* TO_DO: Returns the number of errors */
+
 	return 0;
 }
