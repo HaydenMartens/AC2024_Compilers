@@ -205,6 +205,8 @@ BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 */
 viper_bool readerClear(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
 	/* TO_DO: Adjust flags original */
 	readerPointer->position.wrte = readerPointer->position.mark = readerPointer->position.read = 0;
 	return VIPER_TRUE;
@@ -226,6 +228,8 @@ viper_bool readerClear(BufferPointer const readerPointer) {
 */
 viper_bool readerFree(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
 	/* TO_DO: Free pointers */
 	return VIPER_TRUE;
 }
@@ -246,6 +250,8 @@ viper_bool readerFree(BufferPointer const readerPointer) {
 */
 viper_bool readerIsFull(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_TRUE;
 	/* TO_DO: Check flag if buffer is FUL */
 	return VIPER_FALSE;
 }
@@ -267,6 +273,8 @@ viper_bool readerIsFull(BufferPointer const readerPointer) {
 */
 viper_bool readerIsEmpty(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_TRUE;
 	/* TO_DO: Check flag if buffer is EMP */
 	return VIPER_FALSE;
 }
@@ -288,6 +296,10 @@ viper_bool readerIsEmpty(BufferPointer const readerPointer) {
 */
 viper_bool readerSetMark(BufferPointer const readerPointer, viper_int mark) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
+	if (mark < 0)
+		return VIPER_FALSE;
 	/* TO_DO: Adjust mark */
 	readerPointer->position.mark = mark;
 	return VIPER_TRUE;
@@ -447,8 +459,12 @@ viper_char readerGetChar(BufferPointer const readerPointer) {
 	if (readerPointer == NULL)
 		return CHARSEOF;
 	/* TO_DO: Check condition to read/wrte */
+	if (readerPointer->position.read >= readerPointer->position.wrte)
+		return READER_TERMINATOR;
 	/* TO_DO: Set EOB flag */
+	readerPointer->flags = readerPointer->flags | (READER_REL_FLAG);
 	/* TO_DO: Reset EOB flag */
+	readerPointer->flags = readerPointer->flags & !(READER_FUL_FLAG);
 	if (readerPointer->position.wrte>0)
 		return readerPointer->content[readerPointer->position.read++];
 	return READER_TERMINATOR;
@@ -676,7 +692,7 @@ viper_void readerPrintStat(BufferPointer const readerPointer) {
 	else {
 		/* TO_DO: Print the histogram */
 		for (int i = 0; i < NCHAR; i++)
-			printf("Histogram[%d]=\n", i, readerPointer->histogram[i]);
+			printf("Histogram[%d]%d=\n", i, readerPointer->histogram[i]);
 	}
 }
 
@@ -694,16 +710,11 @@ viper_void readerPrintStat(BufferPointer const readerPointer) {
 *************************************************************
 */
 viper_int readerNumErrors(BufferPointer const readerPointer) {
-	viper_int errors;
-	
-	errors++;
 	/* TO_DO: Defensive programming */
 	if (!readerPointer) {
 		printf("Error in readerNumErrors");
 		return -1;
 	}
 	/* TO_DO: Returns the number of errors */
-
-
-	return errors;
+	return readerPointer->numReaderErrors;
 }
