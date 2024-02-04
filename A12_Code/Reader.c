@@ -462,9 +462,9 @@ viper_char readerGetChar(BufferPointer const readerPointer) {
 	if (readerPointer->position.read >= readerPointer->position.wrte)
 		return READER_TERMINATOR;
 	/* TO_DO: Set EOB flag */
-	readerPointer->flags = readerPointer->flags | (READER_REL_FLAG);
+	readerPointer->flags = readerPointer->flags | (READER_END_FLAG);
 	/* TO_DO: Reset EOB flag */
-	readerPointer->flags = readerPointer->flags & !(READER_FUL_FLAG);
+	readerPointer->flags = readerPointer->flags & !(READER_END_FLAG);
 	if (readerPointer->position.wrte>0)
 		return readerPointer->content[readerPointer->position.read++];
 	return READER_TERMINATOR;
