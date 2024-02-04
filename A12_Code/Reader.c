@@ -87,14 +87,9 @@ BufferPointer readerCreate(viper_int size, viper_int increment, viper_char mode)
 	}
 	if(size <= 0){ // Error checking params
 		size = READER_DEFAULT_SIZE;
-	} else if(size == NULL){
-		size == READER_DEFAULT_SIZE;
 	}
-	if(increment == 0 || increment == NULL){ // checking increment for no param
+	if(increment == 0){ // checking increment for no param
 		increment = READER_DEFAULT_INCREMENT;
-	}
-	if(mode != "f" || mode != "a" || mode != "m"){
-		return NULL;
 	}
 	
 	readerPointer = (BufferPointer)calloc(1, sizeof(Buffer));
@@ -141,9 +136,9 @@ BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 		return NULL;
 	}
 
-	if(ch > NCHAR){
+	if((int)(ch) < 0){
 		readerPointer->numReaderErrors++;
-		return NULL;
+	//	return NULL;
 	}
 
 	readerPointer->flags = readerPointer->flags & !(READER_REL_FLAG); // reset REL flag
@@ -335,7 +330,7 @@ viper_int readerPrint(BufferPointer const readerPointer) {
 		cont++;
 		printf("%c", c);
 		c = readerGetChar(readerPointer);
-		if((readerPointer->flags & READER_EMP_FLAG) == 0){
+		if((readerPointer->flags & READER_EMP_FLAG) != 0){
 			break; // break loop on END bit flag
 		}
 	}
@@ -358,7 +353,7 @@ viper_int readerLoad(BufferPointer const readerPointer, FILE* const fileDescript
 	viper_int size = 0;
 	viper_char c;
 	if(!readerPointer){
-		return NULL;
+		return READER_ERROR;
 	}
 	c = (viper_char)fgetc(fileDescriptor);
 	while (!feof(fileDescriptor)) {
@@ -699,8 +694,10 @@ viper_void readerPrintStat(BufferPointer const readerPointer) {
 	}
 	else {
 		/* TO_DO: Print the histogram */
-		for (int i = 0; i < NCHAR; i++)
-			printf("Histogram[%d]%d=\n", i, readerPointer->histogram[i]);
+	for (int i = 0; i <= NCHAR; i++)
+			if(readerPointer->histogram[i] != 0){
+				printf("Histogram[%c]=%d\n",(char)(i), readerPointer->histogram[i]);
+			}
 	}
 }
 
@@ -726,3 +723,4 @@ viper_int readerNumErrors(BufferPointer const readerPointer) {
 	/* TO_DO: Returns the number of errors */
 	return readerPointer->numReaderErrors;
 }
+
