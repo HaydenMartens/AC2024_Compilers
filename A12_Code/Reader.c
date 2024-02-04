@@ -271,6 +271,8 @@ viper_bool readerIsFull(BufferPointer const readerPointer) {
 */
 viper_bool readerIsEmpty(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_TRUE;
 	/* TO_DO: Check flag if buffer is EMP */
 	if(!readerPointer){
 		return VIPER_FALSE;
@@ -384,7 +386,10 @@ viper_int readerLoad(BufferPointer const readerPointer, FILE* const fileDescript
 */
 viper_bool readerRecover(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
 	/* TO_DO: Recover positions */
+	readerPointer->position.read = 0;
 	readerPointer->position.read = 0;
 	return VIPER_TRUE;
 }
@@ -406,6 +411,8 @@ viper_bool readerRecover(BufferPointer const readerPointer) {
 */
 viper_bool readerRetract(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
 	/* TO_DO: Retract (return 1 pos read) */
 	return VIPER_TRUE;
 }
@@ -427,6 +434,8 @@ viper_bool readerRetract(BufferPointer const readerPointer) {
 */
 viper_bool readerRestore(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (!readerPointer)
+		return VIPER_FALSE;
 	/* TO_DO: Restore positions (read/mark) */
 	readerPointer->position.read = readerPointer->position.mark;
 	return VIPER_TRUE;
@@ -449,9 +458,15 @@ viper_bool readerRestore(BufferPointer const readerPointer) {
 */
 viper_char readerGetChar(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
+	if (readerPointer == NULL)
+		return CHARSEOF;
 	/* TO_DO: Check condition to read/wrte */
+	if (readerPointer->position.read >= readerPointer->position.wrte)
+		return READER_TERMINATOR;
 	/* TO_DO: Set EOB flag */
+	readerPointer->flags = readerPointer->flags | (READER_END_FLAG);
 	/* TO_DO: Reset EOB flag */
+	readerPointer->flags = readerPointer->flags & !(READER_END_FLAG);
 	if (readerPointer->position.wrte>0)
 		return readerPointer->content[readerPointer->position.read++];
 	return READER_TERMINATOR;
@@ -475,10 +490,10 @@ viper_char readerGetChar(BufferPointer const readerPointer) {
 */
 viper_str readerGetContent(BufferPointer const readerPointer, viper_int pos) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
-		printf("Error in readerGetContent");
-		return READER_TERMINATOR;
-	}
+	if (!readerPointer)
+		return NULL;
+	if (pos < 0)
+		return NULL;
 	/* TO_DO: Return content (string) */
 	return readerPointer->content + pos;;
 }
@@ -501,9 +516,9 @@ viper_str readerGetContent(BufferPointer const readerPointer, viper_int pos) {
 */
 viper_int readerGetPosRead(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetPosRead");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return read */
 	return readerPointer->position.read;
@@ -526,9 +541,9 @@ viper_int readerGetPosRead(BufferPointer const readerPointer) {
 */
 viper_int readerGetPosWrte(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetPosWrte");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return wrte */
 	return readerPointer->position.wrte;
@@ -551,9 +566,9 @@ viper_int readerGetPosWrte(BufferPointer const readerPointer) {
 */
 viper_int readerGetPosMark(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetPosMark");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return mark */
 	return readerPointer->position.mark;
@@ -576,9 +591,9 @@ viper_int readerGetPosMark(BufferPointer const readerPointer) {
 */
 viper_int readerGetSize(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetSize");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return size */
 	return readerPointer->size;
@@ -600,9 +615,9 @@ viper_int readerGetSize(BufferPointer const readerPointer) {
 */
 viper_int readerGetInc(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetInc");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return increment */
 	return readerPointer->increment;
@@ -624,9 +639,9 @@ viper_int readerGetInc(BufferPointer const readerPointer) {
 */
 viper_int readerGetMode(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetMode");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return mode */
 	return readerPointer->mode;
@@ -649,9 +664,9 @@ viper_int readerGetMode(BufferPointer const readerPointer) {
 */
 viper_int readerGetFlags(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerGetFlags");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Return flags */
 	return readerPointer->flags;
@@ -673,27 +688,13 @@ viper_int readerGetFlags(BufferPointer const readerPointer) {
 */
 viper_void readerPrintStat(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerPrintStat");
-		return READER_TERMINATOR;
 	}
-	/* TO_DO: Print the histogram */
-
-	// Initialize array of max size to store char count
-	viper_int charCount[256] = { 0 };
-	printf("Histogram:\n");
-
-	// Traverses the buffer and counts for chars
-	for (viper_int i = 0; i < readerPointer->position.wrte; ++i) {
-		viper_char currentChar = readerPointer->content[i];
-		charCount[currentChar]++;
-	}
-
-	// Prints histogram from the array
-	for (viper_int i = 0; i < 256; ++i) {
-		if (charCount[i] > 0) {
-			printf("%c: %d\n", (viper_char)i, charCount[i]);
-		}
+	else {
+		/* TO_DO: Print the histogram */
+		for (int i = 0; i < NCHAR; i++)
+			printf("Histogram[%d]%d=\n", i, readerPointer->histogram[i]);
 	}
 }
 
@@ -711,13 +712,11 @@ viper_void readerPrintStat(BufferPointer const readerPointer) {
 *************************************************************
 */
 viper_int readerNumErrors(BufferPointer const readerPointer) {
-	viper_int errors = 0;
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL) {
+	if (!readerPointer) {
 		printf("Error in readerNumErrors");
-		return READER_TERMINATOR;
+		return -1;
 	}
 	/* TO_DO: Returns the number of errors */
-
-	return 0;
-}	
+	return readerPointer->numReaderErrors;
+}
