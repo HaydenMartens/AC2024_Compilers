@@ -83,7 +83,7 @@
 BufferPointer readerCreate(viper_int size, viper_int increment, viper_char mode) {
 	BufferPointer readerPointer;
 	if(size <= 0){ // Error checking params
-		size = READER_DEFAULT_SIZE
+		size = READER_DEFAULT_SIZE;
 	}
 	if(increment == 0){ // checking increment for no param
 		increment = READER_DEFAULT_INCREMENT;
