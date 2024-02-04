@@ -5,12 +5,12 @@
     {
       "type": "default",
       "project": "CMakeLists.txt",
-      "projectTarget": "Compiler.exe",
-      "name": "Compiler.exe",
+      "projectTarget": "ViperCompiler.exe",
+      "name": "ViperCompiler.exe",
       "args": [
         "r",
-        "README.txt"
+        "hello.vp"
       ]
-    }
+      }
   ]
 }

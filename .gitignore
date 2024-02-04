@@ -1,11 +1,3 @@
-.vscode/c_cpp_properties.json
-.vscode/settings.json
-com/com-p1-hello.py
-com/com-p2-datatypes.py
-com/com-p3-volume.py
-com/com-p4-factorial.py
-com/com-p5-menu.py
-com/com-p6-cmdline.py
-com/com-p7-bool.py
+
 /.vs
 /A12_Code/out/build/x64-Debug

@@ -36,7 +36,7 @@ cmake_minimum_required (VERSION 3.8)
 project ("Compiler")
 
 # Add source to this project's executable: check name and dependences
-add_executable (Compiler
+add_executable (ViperCompiler
 	"Compilers.h"	"Compilers.c"
 	"Reader.h"		"Reader.c"		"MainReader.c"
 	#"Scanner.h"		"Scanner.c"		"MainScanner.c"
