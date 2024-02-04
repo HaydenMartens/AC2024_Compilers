@@ -82,11 +82,8 @@
 
 BufferPointer readerCreate(viper_int size, viper_int increment, viper_char mode) {
 	BufferPointer readerPointer;
-	if (mode == "") {
-		mode == "f";
-	}
 	if(size <= 0){ // Error checking params
-		size = READER_DEFAULT_SIZE;
+		size = READER_DEFAULT_SIZE
 	}
 	if(increment == 0){ // checking increment for no param
 		increment = READER_DEFAULT_INCREMENT;
@@ -138,7 +135,7 @@ BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 
 	if((int)(ch) < 0){
 		readerPointer->numReaderErrors++;
-	//	return NULL;
+		return NULL;
 	}
 
 	readerPointer->flags = readerPointer->flags & !(READER_REL_FLAG); // reset REL flag
@@ -153,15 +150,21 @@ BufferPointer readerAddChar(BufferPointer const readerPointer, viper_char ch) {
 		case MODE_FIXED:
 			return NULL;
 		case MODE_ADDIT:
-			newSize = readerPointer->size + readerPointer->increment;
-			if(newSize <= readerPointer->size || newSize > READER_MAX_SIZE){
+			if((readerPointer->size * readerPointer->increment) <= readerPointer->size || (readerPointer->size * readerPointer->increment) >= READER_MAX_SIZE){
 				return NULL;
+			}
+			else {
+				newSize = readerPointer->size + readerPointer->increment;
+				readerPointer->size = newSize;
 			}
 			break;
 		case MODE_MULTI:
-			newSize = readerPointer->size * readerPointer->increment;
-			if(newSize <= readerPointer->size || newSize > READER_MAX_SIZE){
+			if((readerPointer->size * readerPointer->increment) <= readerPointer->size || (readerPointer->size * readerPointer->increment) >= READER_MAX_SIZE){
 				return NULL;
+			}
+			else {
+				newSize = (readerPointer->size * readerPointer->increment);
+				readerPointer->size = newSize;
 			}
 			break;
 		default:
