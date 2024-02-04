@@ -2,3 +2,4 @@
 .vscode/settings.json
 
 /.vs
+/A12_Code/out/build/x64-Debug
