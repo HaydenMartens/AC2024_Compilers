@@ -403,17 +403,17 @@ viper_bool readerRecover(BufferPointer const readerPointer) {
 *   readerPointer = pointer to Buffer Reader
 * Return value:
 *	Boolean value about operation success
-* TO_DO:
-*   - Use defensive programming
-*	- Check boundary conditions
-*	- Adjust for your LANGUAGE.
 *************************************************************
 */
 viper_bool readerRetract(BufferPointer const readerPointer) {
-	/* TO_DO: Defensive programming */
 	if (!readerPointer)
 		return VIPER_FALSE;
-	/* TO_DO: Retract (return 1 pos read) */
+
+	if(readerPointer->position.read == 0){
+		return VIPER_FALSE;
+	} else {
+		readerPointer->position.read--;
+	}
 	return VIPER_TRUE;
 }
 
@@ -458,17 +458,20 @@ viper_bool readerRestore(BufferPointer const readerPointer) {
 */
 viper_char readerGetChar(BufferPointer const readerPointer) {
 	/* TO_DO: Defensive programming */
-	if (readerPointer == NULL)
+	if (readerPointer == NULL){
 		return CHARSEOF;
-	/* TO_DO: Check condition to read/wrte */
-	if (readerPointer->position.read >= readerPointer->position.wrte)
+	}
+
+	if (readerPointer->position.read >= readerPointer->position.wrte){
+		readerPointer->flags = readerPointer->flags | (READER_END_FLAG);
 		return READER_TERMINATOR;
-	/* TO_DO: Set EOB flag */
-	readerPointer->flags = readerPointer->flags | (READER_END_FLAG);
-	/* TO_DO: Reset EOB flag */
+	}
+
 	readerPointer->flags = readerPointer->flags & !(READER_END_FLAG);
-	if (readerPointer->position.wrte>0)
+
+	if (readerPointer->position.wrte>0){
 		return readerPointer->content[readerPointer->position.read++];
+	}
 	return READER_TERMINATOR;
 }
 
