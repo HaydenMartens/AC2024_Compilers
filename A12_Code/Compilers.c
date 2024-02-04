@@ -128,7 +128,7 @@ viper_int main(int argc, char** argv) {
 viper_void printLogo() {
 	printf("%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s",
 		"\t=---------------------------------------=\n",
-		"\t|  COMPILERS - ALGONQUIN COLLEGE (F23)  |\n",
+		"\t|  COMPILERS - ALGONQUIN COLLEGE (W24)  |\n",
 		"\t=---------------------------------------=\n",
 		"\t|              ....                     |\n",
 		"\t|          ........::.::::::.           |\n",
