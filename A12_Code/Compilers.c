@@ -98,7 +98,12 @@ viper_int main(int argc, char** argv) {
 		printf("%s%c%s", "\n[Option '", PGM_READER, "': Starting READER .....]\n\n");
 		mainReader(argc, argv);
 		break;
-	/* TO_DO: Include later SCANNER (A22) and PARSER (A32) */
+	case PGM_SCANNER :
+		printf("%s%c%s", "\n[Option '", PGM_SCANNER, "': Starting SCANNER .....]\n\n");
+		mainScanner(argc, argv);
+		break;
+	
+	/* TO_DO: Include PARSER (A32) */
 	default:
 		printf("%s%c%s%c%s%c%s", "* OPTIONS:\n- [",
 			PGM_READER, "] - Reader\n- [",
@@ -126,16 +131,16 @@ viper_int main(int argc, char** argv) {
 
 viper_void printLogo() {
 	printf("%s%s%s%s%s%s%s%s%s%s%s",
-		"\t = -------------------------------------- -= \n",
- 		"\t |  COMPILERS - ALGONQUIN COLLEGE (W24)  |\n",
+		"\t=---------------------------------------= \n",
+ 		"\t|  COMPILERS - ALGONQUIN COLLEGE (W24)  |\n",
  		"\t=---------------------------------------=\n",
      	"\t   By Hayden Martens and Allen Wong      \n",
         "\t=---------------------------------------=\n",
 		"\t__      _______ _____  ______ _____    \n",
- 		"\t\\ \\    / /_   _|  __\\|  ____|  __ \\   \n", 
+ 		"\t\\ \\    / /_   _|  __ \\|  ____|  __ \\   \n", 
         "\t \\ \\  / /  | | | |__) | |__  | |__) |  \n",
         "\t  \\ \\/ /   | | |  ___/|  __| |  _  /   \n",
-    	"\t   \\  /   _| |_| |    | |____| |\\\\   \n",
+    	"\t   \\  /   _| |_| |    | |____| |\\ \\   \n",
         "\t    \\/   |_____|_|    |______|_| \\_\\  \n"	
 	);
 }

@@ -9,7 +9,8 @@
       "name": "ViperCompiler.exe",
       "args": [
         "r",
-        "hello.vp"
+        "INPUT6_Big.vp",
+        "a"
       ]
       }
   ]

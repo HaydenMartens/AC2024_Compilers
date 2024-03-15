@@ -108,6 +108,8 @@ Main functions signatures
 */
 viper_int mainReader(viper_int argc, viper_str* argv);
 
+viper_int mainScanner(viper_int agrc, viper_str* argv);
+
 /* 
 TO_DO: Include later mainScaner (A22) and mainParser (A32)
 */
