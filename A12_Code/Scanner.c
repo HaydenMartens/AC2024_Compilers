@@ -39,7 +39,7 @@
 ************************************************************
 * File name: Scanner.c
 * Compiler: MS Visual Studio 2022
-* Course: CST 8152 ñ Compilers, Lab Section: [011, 012]
+* Course: CST 8152 ÅECompilers, Lab Section: [011, 012]
 * Assignment: A22, A32.
 * Date: May 01 2022
 * Purpose: This file contains all functionalities from Scanner.
@@ -89,13 +89,13 @@ TO_DO: Global vars definitions
 /* Global objects - variables */
 /* This buffer is used as a repository for string literals. */
 extern BufferPointer stringLiteralTable;	/* String literal table */
-sofia_intg line;								/* Current line number of the source code */
-extern sofia_intg errorNumber;				/* Defined in platy_st.c - run-time error number */
+viper_int line;								/* Current line number of the source code */
+extern viper_int errorNumber;				/* Defined in platy_st.c - run-time error number */
 
-extern sofia_intg stateType[NUM_STATES];
-extern sofia_string keywordTable[KWT_SIZE];
+extern viper_int stateType[NUM_STATES];
+extern viper_str keywordTable[KWT_SIZE];
 extern PTR_ACCFUN finalStateTable[NUM_STATES];
-extern sofia_intg transitionTable[NUM_STATES][CHAR_CLASSES];
+extern viper_int transitionTable[NUM_STATES][CHAR_CLASSES];
 
 /* Local(file) global objects - variables */
 static BufferPointer lexemeBuffer;			/* Pointer to temporary lexeme buffer */
@@ -109,9 +109,9 @@ static BufferPointer sourceBuffer;			/* Pointer to input source buffer */
  */
  /* TO_DO: Follow the standard and adjust datatypes */
 
-sofia_intg startScanner(BufferPointer psc_buf) {
+viper_int startScanner(BufferPointer psc_buf) {
 	/* TO_DO: Start histogram */
-	for (sofia_intg i=0; i<NUM_TOKENS;i++)
+	for (viper_int i=0; i<NUM_TOKENS;i++)
 		scData.scanHistogram[i] = 0;
 	/* Basic scanner initialization */
 	/* in case the buffer has been read previously  */
@@ -133,20 +133,20 @@ sofia_intg startScanner(BufferPointer psc_buf) {
  ***********************************************************
  */
 
-Token tokenizer(sofia_void) {
+Token tokenizer(viper_void) {
 
 	/* TO_DO: Follow the standard and adjust datatypes */
 
 	Token currentToken = { 0 }; /* token to return after pattern recognition. Set all structure members to 0 */
-	sofia_char c;	/* input symbol */
-	sofia_intg state = 0;		/* initial state of the FSM */
-	sofia_intg lexStart;		/* start offset of a lexeme in the input char buffer (array) */
-	sofia_intg lexEnd;		/* end offset of a lexeme in the input char buffer (array)*/
+	viper_char c;	/* input symbol */
+	viper_int state = 0;		/* initial state of the FSM */
+	viper_int lexStart;		/* start offset of a lexeme in the input char buffer (array) */
+	viper_int lexEnd;		/* end offset of a lexeme in the input char buffer (array)*/
 
-	sofia_intg lexLength;		/* token length */
-	sofia_intg i;				/* counter */
+	viper_int lexLength;		/* token length */
+	viper_int i;				/* counter */
 	/*
-	sofia_char newc;			// new char
+	viper_char newc;			// new char
 	*/
 
 	while (1) { /* endless loop broken by token returns it will generate a warning */
@@ -225,7 +225,7 @@ Token tokenizer(sofia_void) {
 				readerRetract(sourceBuffer);
 			lexEnd = readerGetPosRead(sourceBuffer);
 			lexLength = lexEnd - lexStart;
-			lexemeBuffer = readerCreate((sofia_intg)lexLength + 2, 0, MODE_FIXED);
+			lexemeBuffer = readerCreate((viper_int)lexLength + 2, 0, MODE_FIXED);
 			if (!lexemeBuffer) {
 				fprintf(stderr, "Scanner error: Can not create buffer\n");
 				exit(1);
@@ -270,9 +270,9 @@ Token tokenizer(sofia_void) {
  */
  /* TO_DO: Just change the datatypes */
 
-sofia_intg nextState(sofia_intg state, sofia_char c) {
-	sofia_intg col;
-	sofia_intg next;
+viper_int nextState(viper_int state, viper_char c) {
+	viper_int col;
+	viper_int next;
 	col = nextClass(c);
 	next = transitionTable[state][col];
 	if (DEBUG)
@@ -301,8 +301,8 @@ sofia_intg nextState(sofia_intg state, sofia_char c) {
 /*    [A-z],[0-9],    _,    &,   \', SEOF,    #, other
 	   L(0), D(1), U(2), M(3), Q(4), E(5), C(6),  O(7) */
 
-sofia_intg nextClass(sofia_char c) {
-	sofia_intg val = -1;
+viper_int nextClass(viper_char c) {
+	viper_int val = -1;
 	switch (c) {
 	case CHRCOL2:
 		val = 2;
@@ -339,9 +339,9 @@ sofia_intg nextClass(sofia_char c) {
  */
  /* TO_DO: Adjust the function for IL */
 
-Token funcCMT(sofia_string lexeme) {
+Token funcCMT(viper_str lexeme) {
 	Token currentToken = { 0 };
-	sofia_intg i = 0, len = (sofia_intg)strlen(lexeme);
+	viper_int i = 0, len = (viper_int)strlen(lexeme);
 	currentToken.attribute.contentString = readerGetPosWrte(stringLiteralTable);
 	for (i = 1; i < len - 1; i++) {
 		if (lexeme[i] == '\n')
@@ -365,9 +365,9 @@ Token funcCMT(sofia_string lexeme) {
   */
   /* TO_DO: Adjust the function for IL */
 
-Token funcIL(sofia_string lexeme) {
+Token funcIL(viper_str lexeme) {
 	Token currentToken = { 0 };
-	sofia_long tlong;
+	viper_long tlong;			// Changed sofia_long to viper_long, added typedef to Compilers.h
 	if (lexeme[0] != '\0' && strlen(lexeme) > NUM_LEN) {
 		currentToken = (*finalStateTable[ESNR])(lexeme);
 	}
@@ -376,7 +376,7 @@ Token funcIL(sofia_string lexeme) {
 		if (tlong >= 0 && tlong <= SHRT_MAX) {
 			currentToken.code = INL_T;
 			scData.scanHistogram[currentToken.code]++;
-			currentToken.attribute.intValue = (sofia_intg)tlong;
+			currentToken.attribute.intValue = (viper_int)tlong;
 		}
 		else {
 			currentToken = (*finalStateTable[ESNR])(lexeme);
@@ -400,16 +400,16 @@ Token funcIL(sofia_string lexeme) {
  */
  /* TO_DO: Adjust the function for ID */
 
-Token funcID(sofia_string lexeme) {
+Token funcID(viper_str lexeme) {
 	Token currentToken = { 0 };
 	size_t length = strlen(lexeme);
-	sofia_char lastch = lexeme[length - 1];
-	sofia_intg isID = SOFIA_FALSE;
+	viper_char lastch = lexeme[length - 1];
+	viper_int isID = VIPER_FALSE;
 	switch (lastch) {
 		case MNID_SUF:
 			currentToken.code = MNID_T;
 			scData.scanHistogram[currentToken.code]++;
-			isID = SOFIA_TRUE;
+			isID = VIPER_TRUE;
 			break;
 		default:
 			// Test Keyword
@@ -417,7 +417,7 @@ Token funcID(sofia_string lexeme) {
 			currentToken = funcKEY(lexeme);
 			break;
 	}
-	if (isID == SOFIA_TRUE) {
+	if (isID == VIPER_TRUE) {
 		strncpy(currentToken.attribute.idLexeme, lexeme, VID_LEN);
 		currentToken.attribute.idLexeme[VID_LEN] = CHARSEOF0;
 	}
@@ -437,9 +437,9 @@ Token funcID(sofia_string lexeme) {
  */
 /* TO_DO: Adjust the function for SL */
 
-Token funcSL(sofia_string lexeme) {
+Token funcSL(viper_str lexeme) {
 	Token currentToken = { 0 };
-	sofia_intg i = 0, len = (sofia_intg)strlen(lexeme);
+	viper_int i = 0, len = (viper_int)strlen(lexeme);
 	currentToken.attribute.contentString = readerGetPosWrte(stringLiteralTable);
 	for (i = 1; i < len - 1; i++) {
 		if (lexeme[i] == '\n')
@@ -473,10 +473,10 @@ Token funcSL(sofia_string lexeme) {
  */
  /* TO_DO: Adjust the function for Keywords */
 
-Token funcKEY(sofia_string lexeme) {
+Token funcKEY(viper_str lexeme) {
 	Token currentToken = { 0 };
-	sofia_intg kwindex = -1, j = 0;
-	sofia_intg len = (sofia_intg)strlen(lexeme);
+	viper_int kwindex = -1, j = 0;
+	viper_int len = (viper_int)strlen(lexeme);
 	lexeme[len - 1] = '\0';
 	for (j = 0; j < KWT_SIZE; j++)
 		if (!strcmp(lexeme, &keywordTable[j][0]))
@@ -505,9 +505,9 @@ Token funcKEY(sofia_string lexeme) {
  */
  /* TO_DO: Adjust the function for Errors */
 
-Token funcErr(sofia_string lexeme) {
+Token funcErr(viper_str lexeme) {
 	Token currentToken = { 0 };
-	sofia_intg i = 0, len = (sofia_intg)strlen(lexeme);
+	viper_int i = 0, len = (viper_int)strlen(lexeme);
 	if (len > ERR_LEN) {
 		strncpy(currentToken.attribute.errLexeme, lexeme, ERR_LEN - 3);
 		currentToken.attribute.errLexeme[ERR_LEN - 3] = CHARSEOF0;
@@ -531,8 +531,8 @@ Token funcErr(sofia_string lexeme) {
  ***********************************************************
  */
 
-sofia_void printToken(Token t) {
-	extern sofia_string keywordTable[]; /* link to keyword table in */
+viper_void printToken(Token t) {
+	extern viper_str keywordTable[]; /* link to keyword table in */
 	switch (t.code) {
 	case RTE_T:
 		printf("RTE_T\t\t%s", t.attribute.errLexeme);
@@ -553,8 +553,8 @@ sofia_void printToken(Token t) {
 		printf("MNID_T\t\t%s\n", t.attribute.idLexeme);
 		break;
 	case STR_T:
-		printf("STR_T\t\t%d\t ", (sofia_intg)t.attribute.codeType);
-		printf("%s\n", readerGetContent(stringLiteralTable, (sofia_intg)t.attribute.codeType));
+		printf("STR_T\t\t%d\t ", (viper_int)t.attribute.codeType);
+		printf("%s\n", readerGetContent(stringLiteralTable, (viper_int)t.attribute.codeType));
 		break;
 	case LPR_T:
 		printf("LPR_T\n");
@@ -591,7 +591,7 @@ sofia_void printToken(Token t) {
  *	- Void (procedure)
  ***********************************************************
  */
-sofia_void printScannerData(ScannerData scData) {
+viper_void printScannerData(ScannerData scData) {
 	/* Print Scanner statistics */
 	printf("Statistics:\n");
 	printf("----------------------------------\n");
