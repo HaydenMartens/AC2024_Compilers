@@ -8,9 +8,8 @@
       "projectTarget": "ViperCompiler.exe",
       "name": "ViperCompiler.exe",
       "args": [
-        "r",
-        "INPUT6_Big.vp",
-        "a"
+        "s",
+        "com-p1-hello.vp"
       ]
       }
   ]

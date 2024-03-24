@@ -69,11 +69,12 @@
 #define VID_LEN 20  /* variable identifier length */
 #define ERR_LEN 40  /* error message length */
 #define NUM_LEN 5   /* maximum number of digits for IL */
+#define FL_LEN	10
 
 #define RTE_CODE 1  /* Value for run-time error */
 
 /* TO_DO: Define the number of tokens */
-#define NUM_TOKENS 13
+#define NUM_TOKENS 15
 
 /* TO_DO: Define Token codes - Create your token classes */
 enum TOKENS {
@@ -86,10 +87,12 @@ enum TOKENS {
 	LBR_T,		/*  6: Left brace token */
 	RBR_T,		/*  7: Right brace token */
 	KW_T,		/*  8: Keyword token */
-	EOS_T,		/*  9: End of statement (semicolon) */
+	SOS_T,		/*  9: Start of scope (colon) */
 	RTE_T,		/* 10: Run-time error token */
 	SEOF_T,		/* 11: Source end-of-file token */
-	CMT_T		/* 12: Comment token */
+	CMT_T,		/* 12: Comment token */
+	FL_T,		// 13: Float Token
+	AS_T		// 14: Assignment Token
 };
 
 /* TO_DO: Define the list of keywords */
@@ -103,10 +106,12 @@ static viper_str tokenStrTable[NUM_TOKENS] = {
 	"LBR_T",
 	"RBR_T",
 	"KW_T",
-	"EOS_T",
+	"SOS_T",
 	"RTE_T",
 	"SEOF_T",
-	"CMT_T"
+	"CMT_T",
+	"FL_T",
+	"AS_T"
 };
 
 /* TO_DO: Operators token attributes */
@@ -163,38 +168,43 @@ typedef struct scannerData {
 
 /* TO_DO: Define lexeme FIXED classes */
 /* These constants will be used on nextClass */
-#define CHRCOL2 '_'
-#define CHRCOL3 '&'
-#define CHRCOL4 '\''
+#define CHRCOL2 '\n'
+#define CHRCOL3 '\'' 
+#define CHRCOL3A '"'
+#define CHRCOL4 '_'
 #define CHRCOL6 '#'
+#define CHRCOL7 '.'
 
 /* These constants will be used on VID / MID function */
-#define MNID_SUF '&'
 #define COMM_SYM '#'
 
 /* TO_DO: Error states and illegal state */
-#define ESNR	8		/* Error state with no retract */
-#define ESWR	9		/* Error state with retract */
-#define FS		10		/* Illegal state */
+#define ESNR	12		/* Error state with no retract */
+#define ESWR	13		/* Error state with retract */	
+#define FS		14		/* Illegal state */
 
  /* TO_DO: State transition table definition */
-#define NUM_STATES		10
-#define CHAR_CLASSES	8
+#define NUM_STATES		14
+#define CHAR_CLASSES	9
 
 /* TO_DO: Transition table - type of states defined in separate table */
 static viper_int transitionTable[NUM_STATES][CHAR_CLASSES] = {
-/*    [A-z],[0-9],    _,    &,   \', SEOF,    #, other
-	   L(0), D(1), U(2), M(3), Q(4), E(5), C(6),  O(7) */
-	{     1, ESNR, ESNR, ESNR,    4, ESWR,	  6, ESNR},	// S0: NOAS
-	{     1,    1,    1,    2,	  3,    3,   3,    3},	// S1: NOAS
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS},	// S2: ASNR (MVID)
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS},	// S3: ASWR (KEY)
-	{     4,    4,    4,    4,    5, ESWR,	  4,    4},	// S4: NOAS
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS},	// S5: ASNR (SL)
-	{     6,    6,    6,    6,    6, ESWR,	  7,    6},	// S6: NOAS
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS},	// S7: ASNR (COM)
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS},	// S8: ASNR (ES)
-	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS}  // S9: ASWR (ER)
+/*    [A-z],[0-9],   \n,    \',   _', SEOF,    #, other
+	   L(0), D(1), P(2), Q(3), Q(4), E(5), C(6), .(7)  O(8) */
+	{     1,    6, ESNR,   10, ESNR, ESNR,   4,  ESNR,ESNR},	// S0: NOAS
+	{     1,    1,	 2,    3,	  1, ESNR,   1,  ESNR,   2},	// S1: NOAS
+	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS,  FS},	// S2: FUNC DEF
+	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS,  FS},	// S3: ASWR (KEY)
+	{     4,    4,    5,    4,    4,    5,	  4,	4,   4},	// S4: NOAS
+	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS,  FS},	// S5: ASNR (COMMENT)
+	{  ESNR,    6,    8, ESNR, ESNR, ESNR, ESNR,	7,   8},	// S6: NOAS
+	{  ESNR,    7,	  9, ESNR, ESNR, ESNR, ESNR, ESNR,	 9},	// S7: NOAS
+	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS,  FS},	// S8: ASNR (INT)
+	{    FS,   FS,   FS,   FS,   FS,   FS,	 FS,   FS,  FS}, // S9: ASWR (FLOAT)
+	{    10,   10,   10,   11,   10,  ESNR,  10, ESNR,  10}, // S10: NOAS
+	{    FS,   FS,   FS,   FS,   FS,   FS,   FS,   FS,  FS}, // S11: STR LIT
+	{    FS,   FS,   FS,   FS,   FS,   FS,   FS,   FS,  FS}, // S12 ASNR
+	{    FS,   FS,   FS,   FS,   FS,   FS,   FS,   FS,  FS}  // S13 ASWR
 };
 
 /* Define accepting states types */
@@ -204,16 +214,20 @@ static viper_int transitionTable[NUM_STATES][CHAR_CLASSES] = {
 
 /* TO_DO: Define list of acceptable states */
 static viper_int stateType[NUM_STATES] = {
-	NOFS, /* 00 */
-	NOFS, /* 01 */
-	FSNR, /* 02 (MID) - Methods */
-	FSWR, /* 03 (KEY) */
-	NOFS, /* 04 */
-	FSNR, /* 05 (SL) */
-	NOFS, /* 06 */
-	FSNR, /* 07 (COM) */
-	FSNR, /* 08 (Err1 - no retract) */
-	FSWR  /* 09 (Err2 - retract) */
+	NOFS,  /* 00 */
+	NOFS,  /* 01 */
+	FSWR,  /* 02 (MID) - Methods */
+	FSNR,  /* 03 (KEY) */
+	NOFS,  /* 04 */
+	FSNR,  /* 05 (COM) */
+	NOFS,  /* 06 */
+	NOFS,  /* 07 (COM) */
+	FSNR,  /* 08 (Err1 - no retract) */
+	FSNR,  /* 09 (Err2 - retract) */
+	NOFS,  // 10
+	FSNR,  // 11
+	FSNR,
+	FSWR
 };
 
 /*
@@ -241,6 +255,7 @@ typedef Token(*PTR_ACCFUN)(viper_str lexeme);
 /* Declare accepting states functions */
 Token funcSL	(viper_str lexeme);
 Token funcIL	(viper_str lexeme);
+Token funcFL	(viper_str lexeme);
 Token funcID	(viper_str lexeme);
 Token funcCMT   (viper_str lexeme);
 Token funcKEY	(viper_str lexeme);
@@ -258,11 +273,15 @@ static PTR_ACCFUN finalStateTable[NUM_STATES] = {
 	funcID,		/* MNID	[02] */
 	funcKEY,	/* KEY  [03] */
 	NULL,		/* -    [04] */
-	funcSL,		/* SL   [05] */
+	funcCMT,	/* CMT  [05] */
 	NULL,		/* -    [06] */
-	funcCMT,	/* COM  [07] */
-	funcErr,	/* ERR1 [06] */
-	funcErr		/* ERR2 [07] */
+	NULL,		//		[07]
+	funcIL,	    /* COM  [08] */
+	funcFL,		/* Fl   [09] */
+	NULL,	    /* ERR2 [10] */
+	funcSL,		//		[11]
+	funcErr,	//		[12]
+	funcErr		//		[13]
 };
 
 /*
@@ -272,22 +291,25 @@ Language keywords
 */
 
 /* TO_DO: Define the number of Keywords from the language */
-#define KWT_SIZE 10
+#define KWT_SIZE 13
 
 /* TO_DO: Define the list of keywords */
 static viper_str keywordTable[KWT_SIZE] = {
-	"data",		/* KW00 */
-	"code",		/* KW01 */
+	"def",		/* KW00 */
+	"if",		/* KW01 */
 	"int",		/* KW02 */
-	"real",		/* KW03 */
-	"string",	/* KW04 */
-	"if",		/* KW05 */
-	"then",		/* KW06 */
-	"else",		/* KW07 */
-	"while",	/* KW08 */
-	"do"		/* KW09 */
+	"else",		/* KW03 */
+	"then",	    /* KW04 */
+	"while",	/* KW05 */
+	"return",	/* KW06 */
+	"try",		/* KW07 */
+	"except",	/* KW08 */
+	"do",		/* KW09 */
+	"elif",		/* KW10 */
+	"True",		/* KW11 */
+	"False"		/* KW12 */
 };
-
+//def, if, else, then, while, return, try, except, do, while}
 /* NEW SECTION: About indentation */
 
 /*

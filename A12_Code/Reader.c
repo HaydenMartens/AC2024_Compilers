@@ -300,7 +300,7 @@ viper_bool readerSetMark(BufferPointer const readerPointer, viper_int mark) {
 	if(!readerPointer){
 		return VIPER_FALSE;
 	}
-	if(mark > 0 && mark <= readerPointer->position.wrte){
+	if(mark < 0 && mark <= readerPointer->position.wrte){
 		return VIPER_FALSE;
 	}
 	readerPointer->position.mark = mark;
