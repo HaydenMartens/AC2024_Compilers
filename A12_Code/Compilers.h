@@ -85,6 +85,7 @@ typedef float			viper_float;
 typedef int				viper_bool;
 typedef void 			viper_void;
 typedef char            viper_byte;
+typedef long            viper_long;     // Added typedef for A22
 
 /*
 ------------------------------------------------------------

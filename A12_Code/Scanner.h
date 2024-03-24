@@ -39,7 +39,7 @@
 ************************************************************
 * File name: Scanner.h
 * Compiler: MS Visual Studio 2022
-* Course: CST 8152 ñ Compilers, Lab Section: [011, 012]
+* Course: CST 8152 ÅECompilers, Lab Section: [011, 012]
 * Assignment: A22, A32.
 * Date: May 01 2022
 * Purpose: This file is the main header for Scanner (.h)
